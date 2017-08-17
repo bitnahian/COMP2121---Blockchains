@@ -28,21 +28,25 @@ public class BlockchainServer {
 		BlockchainServer bcs = new BlockchainServer();
 
 		// implement your code here.
-		try (
-                ServerSocket serverSocket = new ServerSocket(portNumber);
-                Socket clientSocket = serverSocket.accept();
-                OutputStream outputStream = clientSocket.getOutputStream();
-                InputStream inputStream = clientSocket.getInputStream();
+        while(true)
+        {
+            try (
+                    ServerSocket serverSocket = new ServerSocket(portNumber);
+                    Socket clientSocket = serverSocket.accept();
+                    OutputStream outputStream = clientSocket.getOutputStream();
+                    InputStream inputStream = clientSocket.getInputStream();
 
-                ) {
-            // If successful handle the request
+            ) {
+                // If successful handle the request
 
-		    bcs.serverHandler(inputStream, outputStream);
-		    clientSocket.close();
+                bcs.serverHandler(inputStream, outputStream);
+                clientSocket.close();
 
-        } catch (IOException e) {
-            e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+
 
     }
 
