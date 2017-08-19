@@ -2,6 +2,8 @@ import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
 
+import static java.lang.Thread.sleep;
+
 public class BlockchainClient {
 
 	public static void main(String[] args) {
@@ -22,6 +24,7 @@ public class BlockchainClient {
 				)
 		{
 			bcc.clientHandler(inputStream, outputStream);
+			clientSocket.close();
 
 		} catch(IOException e) {
 			e.printStackTrace();
@@ -40,14 +43,18 @@ public class BlockchainClient {
 		try {
 			while (sc.hasNextLine()) {
 				userInput = sc.nextLine();
-				System.out.println(userInput);
 				if (userInput.equals("cc")) {
-					outWriter.printf("%s", userInput);
+					outWriter.println(userInput);
 					break;
 				}
 				else {
-					outWriter.printf("%s", userInput);
-					System.out.printf("%s", inputReader.readLine());
+					outWriter.println(userInput);
+					sleep(500);
+					while(inputReader.ready())
+                    {
+                        System.out.printf("%s\n", inputReader.readLine());
+                    }
+
 				}
 			}
 			// Close streams
@@ -56,9 +63,11 @@ public class BlockchainClient {
 
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		} catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
-	}
+    }
 
 	// implement helper functions here if you need any.
 }
