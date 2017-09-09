@@ -1,110 +1,101 @@
 import java.util.ArrayList;
-import java.util.regex.Pattern;
+import java.util.Base64;
 
 public class Blockchain {
 
-	private Block head;
-	private ArrayList<Transaction> pool;
-	private int length;
+    private Block head;
+    private ArrayList<Transaction> pool;
+    private int length;
 
-	private final int poolLimit = 3;
+    public Blockchain() {
+        pool = new ArrayList<>();
+        length = 0;
+    }
 
-	public Blockchain() {
-		pool = new ArrayList<>();
-		length = 0;
-	}
+    public Block getHead() {
+        return head;
+    }
 
-	// getters and setters	
-	public Block getHead() {
-		return head;
-	}
+    public void setHead(Block head) {
+        this.head = head;
+    }
 
-	public ArrayList<Transaction> getPool() {
-		return pool;
-	}
+    public int getLength() {
+        return length;
+    }
 
-	public int getLength() {
-		return length;
-	}
+    public void setLength(int length) {
+        this.length = length;
+    }
 
-	public void setHead(Block head) {
-		this.head = head;
-	}
+    public ArrayList<Transaction> getPool() {
+        return pool;
+    }
 
-	public void setPool(ArrayList<Transaction> pool) {
-		this.pool = pool;
-	}
+    public void setPool(ArrayList<Transaction> pool) {
+        this.pool = pool;
+    }
 
-	public void setLength(int length) {
-		this.length = length;
-	}
+    public boolean addTransaction(String txString) {
+        String[] tokens = txString.split("\\|");
+        if (tokens.length != 3) {
+            return false;
+        }
+        if (!tokens[0].equals("tx")) {
+            return false;
+        }
+        Transaction transaction = new Transaction();
+        transaction.setSender(tokens[1]);
+        transaction.setContent(tokens[2]);
+        if (!transaction.isValid()) {
+            return false;
+        }
+        pool.add(transaction);
+        return true;
+    }
 
-	// add a transaction
-	public int addTransaction(String txString) {
-		
-		String parts[] = txString.split("\\|");
-		// Check validity
-		if(parts.length != 3)
-			return 0;
-		else if( !parts[0].equals("tx") || !Pattern.matches("[a-z]{4}[0-9]{4}", parts[1]) || parts[2].length() > 70 || parts[2].contains("\\|"))
-			return 0;
-		// Create the new transaction
-		Transaction tx = new Transaction();
-		
-		tx.setSender(parts[1]);
-		tx.setContent(parts[2]);
-		// Add to the pool
-		getPool().add(tx);
-		
-		if(getPool().size() == poolLimit)
-		{
-			addBlock();
-			return 2;
-		}
-		
-		return 1;
-		// implement you code here.
-	}
+    public boolean commit(int nonce) {
+        if (pool.size() == 0) {
+            return false;
+        }
 
-	public String toString() {
-		String cutOffRule = new String(new char[81]).replace("\0", "-") + "\n";
-		String poolString = "";
-		for (Transaction tx : pool) {
-			poolString += tx.toString();
-		}
-		
-		String blockString = "";
-		Block bl = head;
-		while (bl != null) {
-			blockString += bl.toString();
-			bl = bl.getPreviousBlock();
-		}
+        Block newBlock = new Block();
+        if (head == null) {
+            newBlock.setPreviousHash(new byte[32]);
+        } else {
+            newBlock.setPreviousHash(head.calculateHash());
+        }
+        newBlock.setTransactions(pool);
+        byte[] hash = newBlock.calculateHashWithNonce(nonce);
+        String hashString = Base64.getEncoder().encodeToString(hash);
+        if(hashString.startsWith("A")) {
+            newBlock.setPreviousBlock(head);
+            head = newBlock;
+            pool = new ArrayList<>();
+            length += 1;
+            return true;
+        }
+        return false;
+    }
 
-		return "Pool:\n" + cutOffRule + poolString + cutOffRule + blockString;
-	}
+    public String toString() {
+        String cutOffRule = new String(new char[81]).replace("\0", "-") + "\n";
+        String poolString = "";
+        for (Transaction tx : pool) {
+            poolString += tx.toString();
+        }
 
-	public void addBlock()
-	{
-		Block block = new Block();
-		// Create link
-		if(getLength() == 0)
-		{
-			// Set Previous Hash to 32 bytes of 0
-			block.setPreviousHash(new byte[32]);
-		}
-		else 
-		{
-			block.setPreviousBlock(getHead());
-			block.setPreviousHash(getHead().calculateHash());
-		}
-		block.setTransactions(getPool());
-		
-		// Reset pool to empty array list
-		setPool(new ArrayList<Transaction>());
-		// Set head to block
-		setHead(block);
-		setLength(getLength()+ 1);
-		
-	}
-	// implement helper functions here if you need any.
+        String blockString = "";
+        Block bl = head;
+        while (bl != null) {
+            blockString += bl.toString();
+            bl = bl.getPreviousBlock();
+        }
+
+        return "Pool:\n"
+                + cutOffRule
+                + poolString
+                + cutOffRule
+                + blockString;
+    }
 }
