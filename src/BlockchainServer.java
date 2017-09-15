@@ -15,6 +15,21 @@ public class BlockchainServer {
         pct.start();
 
         // implement your code here
+
+        ServerSocket serverSocket = null;
+        try {
+            serverSocket = new ServerSocket(portNumber);
+
+            // implement your code here.
+            while(true) {
+                Socket clientSocket = serverSocket.accept();
+                Thread serverThread = new Thread(new BlockchainClientRunnable(blockchain, clientSocket));
+                serverThread.start();
+
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         pcr.setRunning(false);
         pct.join();
     }

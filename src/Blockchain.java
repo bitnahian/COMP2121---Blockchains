@@ -3,9 +3,9 @@ import java.util.Base64;
 
 public class Blockchain {
 
-    private Block head;
+    private volatile Block head;
     private ArrayList<Transaction> pool;
-    private int length;
+    private volatile int length;
 
     public Blockchain() {
         pool = new ArrayList<>();
@@ -28,15 +28,15 @@ public class Blockchain {
         this.length = length;
     }
 
-    public ArrayList<Transaction> getPool() {
+    public synchronized ArrayList<Transaction> getPool() {
         return pool;
     }
 
-    public void setPool(ArrayList<Transaction> pool) {
+    public void synchronized setPool(ArrayList<Transaction> pool) {
         this.pool = pool;
     }
 
-    public boolean addTransaction(String txString) {
+    public boolean synchronized addTransaction(String txString) {
         String[] tokens = txString.split("\\|");
         if (tokens.length != 3) {
             return false;
@@ -55,30 +55,30 @@ public class Blockchain {
     }
 
     public boolean commit(int nonce) {
-        if (pool.size() == 0) {
+        if (getPool().size() == 0) {
             return false;
         }
 
         Block newBlock = new Block();
-        if (head == null) {
+        if (getHead() == null) {
             newBlock.setPreviousHash(new byte[32]);
         } else {
-            newBlock.setPreviousHash(head.calculateHash());
+            newBlock.setPreviousHash(getHead().calculateHash());
         }
         newBlock.setTransactions(pool);
         byte[] hash = newBlock.calculateHashWithNonce(nonce);
         String hashString = Base64.getEncoder().encodeToString(hash);
         if(hashString.startsWith("A")) {
             newBlock.setPreviousBlock(head);
-            head = newBlock;
-            pool = new ArrayList<>();
-            length += 1;
+            setHead(newBlock);
+            setPool(new ArrayList<>());
+            setLength(getLength() + 1);
             return true;
         }
         return false;
     }
 
-    public String toString() {
+    public String synchronized toString() {
         String cutOffRule = new String(new char[81]).replace("\0", "-") + "\n";
         String poolString = "";
         for (Transaction tx : pool) {

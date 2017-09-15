@@ -24,11 +24,11 @@ public class Block {
         this.previousHash = prevHash;
     }
 
-    public Block getPreviousBlock() {
+    public Block synchronized getPreviousBlock() {
         return previousBlock;
     }
 
-    public void setPreviousBlock(Block previousBlock) {
+    public void synchronized setPreviousBlock(Block previousBlock) {
         this.previousBlock = previousBlock;
     }
 
@@ -36,11 +36,11 @@ public class Block {
         return transactions;
     }
 
-    public void setTransactions(ArrayList<Transaction> transactions) {
+    public void synchronized setTransactions(ArrayList<Transaction> transactions) {
         this.transactions = transactions;
     }
 
-    public void addTransaction(Transaction transaction) {
+    public void synchronized addTransaction(Transaction transaction) {
         this.transactions.add(transaction);
     }
 
