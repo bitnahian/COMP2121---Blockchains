@@ -1,7 +1,7 @@
-servers.num=2 
+servers.num=23455
 servers.num=3
 
-server0.host=localhost
+server0.host=12.1.1.2
 
 server1.host=localhost
 server1.port=123456

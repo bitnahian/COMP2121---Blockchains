@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -11,7 +12,11 @@ public class BlockchainClient {
         String configFileName = args[0];
 
         ServerInfoList pl = new ServerInfoList();
-        pl.initialiseFromFile(configFileName);
+        try {
+            pl.initialiseFromFile(configFileName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         Scanner sc = new Scanner(System.in);
 
