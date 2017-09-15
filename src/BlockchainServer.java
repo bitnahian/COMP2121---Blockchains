@@ -1,3 +1,7 @@
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+
 public class BlockchainServer {
 
     public static void main(String[] args) {
@@ -23,15 +27,22 @@ public class BlockchainServer {
             // implement your code here.
             while(true) {
                 Socket clientSocket = serverSocket.accept();
-                Thread serverThread = new Thread(new BlockchainClientRunnable(blockchain, clientSocket));
+                Thread serverThread = new Thread(new BlockchainServerRunnable(clientSocket, blockchain));
                 serverThread.start();
 
             }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         pcr.setRunning(false);
-        pct.join();
+        try {
+            pct.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
     }
 
     // implement any helper method here if you need any

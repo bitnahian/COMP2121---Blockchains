@@ -1,3 +1,4 @@
+import java.io.*;
 import java.net.Socket;
 
 public class BlockchainServerRunnable implements Runnable{
@@ -41,21 +42,16 @@ public class BlockchainServerRunnable implements Runnable{
                 } else if (inputLine.equals("cc")) {
                     break;
                 } else if (inputLine.matches("^tx.*")) {
-                    switch (blockchain.addTransaction(inputLine)) {
-                        case 0:
-                            outputLine = "Rejected\n\n";
-                            break;
-                        case 1:
-                            outputLine = "Accepted\n\n";
-                            break;
-                        case 2:
-                            outputLine = "Accepted\n\n";
-                    }
+                    if (blockchain.addTransaction(inputLine))
+                        outputLine = "Accepted\n\n";
+                    else
+                        outputLine = "Rejected\n\n";
                     outWriter.printf("%s", outputLine);
                 } else {
                     outputLine = "Error\n\n";
                     outWriter.printf("%s", outputLine);
                 }
+                outWriter.flush();
             }
         } catch (IOException e) {
             e.printStackTrace();

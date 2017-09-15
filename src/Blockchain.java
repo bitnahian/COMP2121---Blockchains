@@ -32,11 +32,11 @@ public class Blockchain {
         return pool;
     }
 
-    public void synchronized setPool(ArrayList<Transaction> pool) {
+    public synchronized void setPool(ArrayList<Transaction> pool) {
         this.pool = pool;
     }
 
-    public boolean synchronized addTransaction(String txString) {
+    public synchronized boolean addTransaction(String txString) {
         String[] tokens = txString.split("\\|");
         if (tokens.length != 3) {
             return false;
@@ -54,7 +54,7 @@ public class Blockchain {
         return true;
     }
 
-    public boolean commit(int nonce) {
+    public synchronized boolean commit(int nonce) {
         if (getPool().size() == 0) {
             return false;
         }
@@ -78,7 +78,7 @@ public class Blockchain {
         return false;
     }
 
-    public String synchronized toString() {
+    public synchronized String toString() {
         String cutOffRule = new String(new char[81]).replace("\0", "-") + "\n";
         String poolString = "";
         for (Transaction tx : pool) {

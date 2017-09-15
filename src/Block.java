@@ -24,11 +24,11 @@ public class Block {
         this.previousHash = prevHash;
     }
 
-    public Block synchronized getPreviousBlock() {
+    public synchronized Block getPreviousBlock() {
         return previousBlock;
     }
 
-    public void synchronized setPreviousBlock(Block previousBlock) {
+    public synchronized void setPreviousBlock(Block previousBlock) {
         this.previousBlock = previousBlock;
     }
 
@@ -36,11 +36,11 @@ public class Block {
         return transactions;
     }
 
-    public void synchronized setTransactions(ArrayList<Transaction> transactions) {
+    public synchronized void setTransactions(ArrayList<Transaction> transactions) {
         this.transactions = transactions;
     }
 
-    public void synchronized addTransaction(Transaction transaction) {
+    public synchronized void addTransaction(Transaction transaction) {
         this.transactions.add(transaction);
     }
 
@@ -81,7 +81,7 @@ public class Block {
         }
     }
 
-    public String toString() {
+    public synchronized String toString() {
         String cutOffRule = new String(new char[81]).replace("\0", "-") + "\n";
         String prevHashString = String.format("|PreviousHash:|%65s|\n", Base64.getEncoder().encodeToString(previousHash));
         String hashString = String.format("|CurrentHash:|%66s|\n", Base64.getEncoder().encodeToString(calculateHash()));
