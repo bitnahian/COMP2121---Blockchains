@@ -1,0 +1,14 @@
+servers.num=2 
+servers.num=3
+
+server0.host=localhost
+
+server1.host=localhost
+server1.port=123456
+
+server2.host=localhost
+
+server2.port=8333
+
+server3.host=localhost
+server3.port=8334
