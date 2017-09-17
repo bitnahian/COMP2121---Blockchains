@@ -2,6 +2,7 @@ public class ServerInfo {
 
     private String host;
     private int port;
+    private int index;
 
     public ServerInfo(String host, int port) {
         this.host = host;
