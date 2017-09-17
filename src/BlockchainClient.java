@@ -25,9 +25,16 @@ public class BlockchainClient {
 
             while (sc.hasNextLine()) {
                 message = sc.nextLine();
-                if (message.equals("sd")) {
+                if (message.equals("sd"))
                     break;
+                else if(message.equals("ls"))
+                    System.out.printf("%s\n", pl.toString());
+                else if(message.contains("ad"))
+                {
+                    String[] parts = message.split("|");
+
                 }
+            }
         }
     }
 
