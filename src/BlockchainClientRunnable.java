@@ -8,6 +8,7 @@ public class BlockchainClientRunnable implements Runnable {
 
     public void run() {
         // implement your code here
+        
     }
 
     public String getReply() {

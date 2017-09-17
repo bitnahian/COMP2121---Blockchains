@@ -26,16 +26,29 @@ public class BlockchainClient {
         }
     }
 
-    public void unicast (int serverNumber, ServerInfo p, String message) {
-        // implement your code here
+    public void unicast (int serverNumber, ServerInfo p, String message) throws InterruptedException {
+        BlockchainClientRunnable bcr = new BlockchainClientRunnable(serverNumber, p.getHost(), p.getPort(), message);
+        Thread unicast = new Thread(bcr);
+        unicast.start();
+        unicast.join();
     }
 
-    public void broadcast (ServerInfoList pl, String message) {
-        // implement your code here
+    public void broadcast (ServerInfoList pl, String message) throws InterruptedException {
+
+        int serverNumber = 0;
+        for(ServerInfo serverInfo : pl.getServerInfos())
+        {
+            unicast(serverNumber, serverInfo, message);
+            serverNumber++;
+        }
     }
 
-    public void multicast (ServerInfoList serverInfoList, ArrayList<Integer> serverIndices, String message) {
-        // implement your code here
+    public void multicast (ServerInfoList serverInfoList, ArrayList<Integer> serverIndices, String message) throws InterruptedException {
+
+        for(Integer serverNumber : serverIndices)
+        {
+            unicast(serverNumber, serverInfoList.getServerInfos().get(serverNumber), message);
+        }
     }
 
     // implement any helper method here if you need any
