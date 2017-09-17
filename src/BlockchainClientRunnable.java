@@ -1,8 +1,7 @@
 import java.io.*;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
+
 
 public class BlockchainClientRunnable implements Runnable {
 
@@ -63,7 +62,7 @@ public class BlockchainClientRunnable implements Runnable {
             throw new Exception();
 
         this.reply += output + "\n";
-        
+
         while(inputReader.ready())
         {
             this.reply += inputReader.readLine() + "\n";

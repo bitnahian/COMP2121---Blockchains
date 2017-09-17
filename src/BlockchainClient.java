@@ -13,11 +13,7 @@ public class BlockchainClient {
         String configFileName = args[0];
 
         ServerInfoList pl = new ServerInfoList();
-        try {
-            pl.initialiseFromFile(configFileName);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        pl.initialiseFromFile(configFileName);
 
         Scanner sc = new Scanner(System.in);
         BlockchainClient bc = new BlockchainClient();
@@ -90,45 +86,37 @@ public class BlockchainClient {
                         System.out.printf("Failed\n\n");
                     }
                     else {
-                        try {
-                            bc.broadcast(pl, message);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                        bc.broadcast(pl, message);
                     }
                 }
                 else if(message.contains("pb"))
                 {
-                    try {
 
-                        if(message.equals("pb")) // Then broadcast
-                        {
-                            bc.broadcast(pl, message);
-                            continue;
-                        }
-                        if(!message.matches("^pb(?:\\|\\d+)+")) // If it doesn't match format
-                            System.out.printf("Failed\n\n");
-                        else
-                        {
-                            String[] parts = message.split("\\|");
-                            if(parts.length == 2) // Only 1 then unicast
-                            {
-                                int serverIndex = Integer.parseInt(parts[1]);
-                                bc.unicast(serverIndex, pl.getServerInfos().get(serverIndex), "pb");
-                            }
-                            else if(parts.length > 2) // Time to multicast hue hue
-                            {
-                                ArrayList<Integer> indices = new ArrayList<>();
-                                for(int i = 1; i < parts.length; ++i)
-                                    indices.add(Integer.parseInt(parts[i]));
-                                bc.multicast(pl, indices, "pb");
-                            }
-                            System.out.printf("Succeeded\n\n");
-                        }
-
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                    if(message.equals("pb")) // Then broadcast
+                    {
+                        bc.broadcast(pl, message);
+                        continue;
                     }
+                    if(!message.matches("^pb(?:\\|\\d+)+")) // If it doesn't match format
+                        System.out.printf("Failed\n\n");
+                    else
+                    {
+                        String[] parts = message.split("\\|");
+                        if(parts.length == 2) // Only 1 then unicast
+                        {
+                            int serverIndex = Integer.parseInt(parts[1]);
+                            bc.unicast(serverIndex, pl.getServerInfos().get(serverIndex), "pb");
+                        }
+                        else if(parts.length > 2) // Time to multicast hue hue
+                        {
+                            ArrayList<Integer> indices = new ArrayList<>();
+                            for(int i = 1; i < parts.length; ++i)
+                                indices.add(Integer.parseInt(parts[i]));
+                            bc.multicast(pl, indices, "pb");
+                        }
+                        System.out.printf("Succeeded\n\n");
+                    }
+
                 }
                 else
                 {
@@ -139,16 +127,22 @@ public class BlockchainClient {
         }
     }
 
-    public void unicast (int serverNumber, ServerInfo p, String message) throws InterruptedException {
+    public void unicast (int serverNumber, ServerInfo p, String message) {
 
         BlockchainClientRunnable bcr = new BlockchainClientRunnable(serverNumber, p.getHost(), p.getPort(), message);
-        Thread unicast = new Thread(bcr);
-        unicast.start();
-        unicast.join();
-        System.out.printf("%s", bcr.getReply());
+        try {
+            Thread unicast = new Thread(bcr);
+            unicast.start();
+            unicast.join();
+            System.out.printf("%s", bcr.getReply());
+        } catch (InterruptedException e)
+        {
+            e.printStackTrace();
+        }
+
     }
 
-    public void broadcast (ServerInfoList pl, String message) throws InterruptedException {
+    public void broadcast (ServerInfoList pl, String message) {
 
         int serverNumber = 0;
         for(ServerInfo serverInfo : pl.getServerInfos())
@@ -156,9 +150,10 @@ public class BlockchainClient {
             unicast(serverNumber, serverInfo, message);
             serverNumber++;
         }
+
     }
 
-    public void multicast (ServerInfoList serverInfoList, ArrayList<Integer> serverIndices, String message) throws InterruptedException {
+    public void multicast (ServerInfoList serverInfoList, ArrayList<Integer> serverIndices, String message){
 
         for(Integer serverNumber : serverIndices)
         {

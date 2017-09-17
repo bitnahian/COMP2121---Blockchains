@@ -80,7 +80,7 @@ public class ServerInfoList {
 
     }
 
-    public void initialiseFromFile(String filename) throws IOException {
+    public void initialiseFromFile(String filename){
 
         int serverNum = 0;
         // Using try with resources
@@ -161,6 +161,9 @@ public class ServerInfoList {
             }
 
             if(br != null) br.close();
+        } catch (IOException e)
+        {
+            e.printStackTrace();
         }
 
 
