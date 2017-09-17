@@ -22,7 +22,8 @@ public class BlockchainClient {
 
         while (true) {
             String message = sc.nextLine();
-            // implement your code here
+
+            
         }
     }
 
