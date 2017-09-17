@@ -21,9 +21,13 @@ public class BlockchainClient {
         Scanner sc = new Scanner(System.in);
 
         while (true) {
-            String message = sc.nextLine();
+            String message = "";
 
-            
+            while (sc.hasNextLine()) {
+                message = sc.nextLine();
+                if (message.equals("sd")) {
+                    break;
+                }
         }
     }
 
