@@ -1,5 +1,8 @@
 import java.io.*;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 public class BlockchainClientRunnable implements Runnable {
 
@@ -20,17 +23,27 @@ public class BlockchainClientRunnable implements Runnable {
 
     public void run() {
 
-        try(
-                Socket clientSocket = new Socket(serverName, portNumber);
-                InputStream inputStream = clientSocket.getInputStream();
-                OutputStream outputStream = clientSocket.getOutputStream();
-        )
-        {
+        try {
+            if(!InetAddress.getByName(this.serverName).isReachable(2000)) {
+                throw new Exception();
+            }
+        } catch (Exception e) {
+            System.out.printf("%sServer is not available\n\n", getReply());
+            return;
+        }
+
+        try {
+
+            Socket clientSocket = new Socket(serverName, portNumber);
+            InputStream inputStream = clientSocket.getInputStream();
+            OutputStream outputStream = clientSocket.getOutputStream();
+
             clientHandler(inputStream, outputStream);
             clientSocket.close();
 
         } catch(Exception e) {
-            System.out.printf("%sServer is not available\n\n", getReply());
+            System.err.printf("%sServer is not available\n\n", getReply());
+            return;
         }
 
     }
@@ -40,16 +53,21 @@ public class BlockchainClientRunnable implements Runnable {
         BufferedReader inputReader = new BufferedReader(new InputStreamReader(serverInputStream));
         PrintWriter outWriter = new PrintWriter(serverOutputStream, true);
 
-        String output = "";
         outWriter.println(message);
         long startTime = System.currentTimeMillis(); //fetch starting time
         // Time out of 2 seconds
-        while( !inputReader.ready() ||(System.currentTimeMillis()-startTime)<2000);
+        while( !inputReader.ready() && (System.currentTimeMillis()-startTime)<2000);
+        String output = "";
         // Get reply from server
         if((output = inputReader.readLine()) == null)
             throw new Exception();
-        else
-            System.out.printf("%s%s\n", getReply(), output);
+
+        System.out.printf("%s%s\n", getReply(), output);
+
+        while(inputReader.ready())
+        {
+            System.out.printf("%s\n", inputReader.readLine());
+        }
 
         outWriter.println("cc");
     }
@@ -58,5 +76,4 @@ public class BlockchainClientRunnable implements Runnable {
         return reply;
     }
 
-    // implement any helper method here if you need any
 }

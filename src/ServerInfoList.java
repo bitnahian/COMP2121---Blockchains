@@ -3,6 +3,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class ServerInfoList {
 
@@ -159,17 +160,6 @@ public class ServerInfoList {
                 }
             }
 
-            for(ServerInfo info : serverInfos)
-            {
-                if(info != null) {
-                    System.out.println(info.getHost());
-                    System.out.println(info.getPort());
-                }
-                else
-                    System.out.println("Null");
-            }
-
-
             if(br != null) br.close();
         }
 
@@ -193,23 +183,42 @@ public class ServerInfoList {
         this.serverInfos = serverInfos;
     }
 
-    public boolean addServerInfo(ServerInfo newServerInfo) { 
-        // implement your code here
+    public boolean addServerInfo(ServerInfo newServerInfo) {
+        if(isPortVerified(newServerInfo.getPort()) && isHostVerified(newServerInfo.getHost()))
+        {
+            serverInfos.add(newServerInfo);
+            return true;
+        }
         return false;
     }
 
-    public boolean updateServerInfo(int index, ServerInfo newServerInfo) { 
-        // implement your code here
-        return false;
+    public boolean updateServerInfo(int index, ServerInfo newServerInfo) {
+
+        if((index >= serverInfos.size() || index < 0)
+                || !isPortVerified(newServerInfo.getPort()) || !isHostVerified(newServerInfo.getHost()))
+            return false;
+        else {
+            this.serverInfos.set(index, newServerInfo);
+            return true;
+        }
+
     }
     
-    public boolean removeServerInfo(int index) { 
-        // implement your code here
-        return false;
+    public boolean removeServerInfo(int index) {
+        if(index >= serverInfos.size() || index < 0)
+            return false;
+        else {
+            serverInfos.set(index, null);
+            return true;
+        }
     }
 
     public boolean clearServerInfo() { 
-        // implement your code here
+        if(serverInfos.contains(null))
+        {
+            serverInfos.removeAll(Collections.singleton(null));
+            return true;
+        }
         return false;
     }
 
@@ -222,6 +231,26 @@ public class ServerInfoList {
         }
         return s;
     }
+
+    private static boolean isHostVerified(String host)
+    {
+        if(host.compareTo("localhost") == 0 ||
+                host.matches("\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b"))
+        {
+            // Regexp for IP pattern found from source : http://www.regular-expressions.info/regexbuddy/ipaccurate.html
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean isPortVerified(int portNumber)
+    {
+        if(portNumber > 65535 || portNumber < 1024) {
+            return false;
+        }
+        return true;
+    }
+
 
     // implement any helper method here if you need any
 }
