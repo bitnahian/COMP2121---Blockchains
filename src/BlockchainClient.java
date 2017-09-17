@@ -145,6 +145,7 @@ public class BlockchainClient {
         Thread unicast = new Thread(bcr);
         unicast.start();
         unicast.join();
+        System.out.printf("%s", bcr.getReply());
     }
 
     public void broadcast (ServerInfoList pl, String message) throws InterruptedException {

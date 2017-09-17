@@ -24,11 +24,11 @@ public class BlockchainClientRunnable implements Runnable {
     public void run() {
 
         try {
-            if(!InetAddress.getByName(this.serverName).isReachable(2000)) {
+            if(!InetAddress.getByName(this.serverName).isReachable(100)) {
                 throw new Exception();
             }
         } catch (Exception e) {
-            System.out.printf("%sServer is not available\n\n", getReply());
+            this.reply += "Server is not available\n\n";
             return;
         }
 
@@ -42,7 +42,7 @@ public class BlockchainClientRunnable implements Runnable {
             clientSocket.close();
 
         } catch(Exception e) {
-            System.err.printf("%sServer is not available\n\n", getReply());
+            this.reply += "Server is not available\n\n";
             return;
         }
 
@@ -62,11 +62,11 @@ public class BlockchainClientRunnable implements Runnable {
         if((output = inputReader.readLine()) == null)
             throw new Exception();
 
-        System.out.printf("%s%s\n", getReply(), output);
-
+        this.reply += output + "\n";
+        
         while(inputReader.ready())
         {
-            System.out.printf("%s\n", inputReader.readLine());
+            this.reply += inputReader.readLine() + "\n";
         }
 
         outWriter.println("cc");
