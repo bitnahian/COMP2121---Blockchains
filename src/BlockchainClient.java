@@ -1,73 +1,67 @@
-import java.io.*;
-import java.net.Socket;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Scanner;
-
-import static java.lang.Thread.sleep;
 
 public class BlockchainClient {
 
-	public static void main(String[] args) {
+    public static void main(String[] args) {
 
-		if (args.length != 2) {
-			return;
-		}
+        if (args.length != 1) {
+            return;
+        }
+        String configFileName = args[0];
 
-		String serverName = args[0];
-		int portNumber = Integer.parseInt(args[1]);
-		BlockchainClient bcc = new BlockchainClient();
-
-		// implement your code here.
-		try(
-				Socket clientSocket = new Socket(serverName, portNumber);
-				InputStream inputStream = clientSocket.getInputStream();
-				OutputStream outputStream = clientSocket.getOutputStream();
-				)
-		{
-			bcc.clientHandler(inputStream, outputStream);
-			clientSocket.close();
-
-		} catch(IOException e) {
-			e.printStackTrace();
-		}
-
-	}
-
-	public void clientHandler(InputStream serverInputStream, OutputStream serverOutputStream) {
-		BufferedReader inputReader = new BufferedReader(new InputStreamReader(serverInputStream));
-		PrintWriter outWriter = new PrintWriter(serverOutputStream, true);
-
-		String userInput = "";
-		Scanner sc = new Scanner(System.in);
-
-		// Write to the outputStream and listen through the inputStream
-		try {
-			while (sc.hasNextLine()) {
-				userInput = sc.nextLine();
-				if (userInput.equals("cc")) {
-					outWriter.println(userInput);
-					break;
-				}
-				else {
-					outWriter.println(userInput);
-					sleep(500);
-					while(inputReader.ready())
-                    {
-                        System.out.printf("%s\n", inputReader.readLine());
-                    }
-
-				}
-			}
-			// Close streams
-			outWriter.close();
-			inputReader.close();
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
+        ServerInfoList pl = new ServerInfoList();
+        try {
+            pl.initialiseFromFile(configFileName);
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
+        Scanner sc = new Scanner(System.in);
+
+        while (true) {
+            String message = "";
+
+            while (sc.hasNextLine()) {
+                message = sc.nextLine();
+                if (message.equals("sd"))
+                    break;
+                else if(message.equals("ls"))
+                    System.out.printf("%s\n", pl.toString());
+                else if(message.contains("ad"))
+                {
+                    String[] parts = message.split("|");
+
+                }
+            }
+        }
     }
 
-	// implement helper functions here if you need any.
+    public void unicast (int serverNumber, ServerInfo p, String message) throws InterruptedException {
+        BlockchainClientRunnable bcr = new BlockchainClientRunnable(serverNumber, p.getHost(), p.getPort(), message);
+        Thread unicast = new Thread(bcr);
+        unicast.start();
+        unicast.join();
+    }
+
+    public void broadcast (ServerInfoList pl, String message) throws InterruptedException {
+
+        int serverNumber = 0;
+        for(ServerInfo serverInfo : pl.getServerInfos())
+        {
+            unicast(serverNumber, serverInfo, message);
+            serverNumber++;
+        }
+    }
+
+    public void multicast (ServerInfoList serverInfoList, ArrayList<Integer> serverIndices, String message) throws InterruptedException {
+
+        for(Integer serverNumber : serverIndices)
+        {
+            unicast(serverNumber, serverInfoList.getServerInfos().get(serverNumber), message);
+        }
+    }
+
+    // implement any helper method here if you need any
 }

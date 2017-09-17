@@ -1,0 +1,5 @@
+#igore the idea files
+.idea
+COMP2121.iml
+out
+src.zip

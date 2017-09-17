@@ -2,6 +2,8 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import java.io.IOException;
+
 public class BlockchainTest {
 
 	private Blockchain b;
@@ -22,7 +24,19 @@ public class BlockchainTest {
 			System.out.println(mirror.toString());
 			mirror = mirror.getPreviousBlock();
 		}
-		
+
 		System.out.println(b.toString());
+	}
+
+	@Test
+	public void testInitialiseFromFile()
+	{
+		ServerInfoList list = new ServerInfoList();
+
+		try {
+			list.initialiseFromFile("src/config");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

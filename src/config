@@ -1,0 +1,17 @@
+servers.num=4
+servers.num=2
+
+server0.host=12.1.1.2
+server0.port=1243
+
+server1.host=localhost
+server1.port=6333
+
+server2.host=localhost
+
+server2.port=8333
+
+server3.host=localhost
+server3.port=8334
+
+servers.num=1
