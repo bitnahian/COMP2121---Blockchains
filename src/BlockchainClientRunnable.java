@@ -54,20 +54,19 @@ public class BlockchainClientRunnable implements Runnable {
 
         long startTime = System.currentTimeMillis(); //fetch starting time
         outWriter.println(message);
-        //Thread.sleep(2000);
         // Time out of 2 seconds
         Thread.sleep(50);
         String output = "";
         while(inputReader.ready())
         {
             output += inputReader.readLine() + "\n";
+            if (System.currentTimeMillis()-startTime > 2000)
+                throw new Exception();
         }
-
-        if (System.currentTimeMillis()-startTime > 2000)
-            throw new Exception();
 
         this.reply += output;
         outWriter.println("cc");
+        outWriter.close();
     }
 
     public String getReply() {

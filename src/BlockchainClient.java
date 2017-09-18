@@ -127,7 +127,9 @@ public class BlockchainClient {
     }
 
     public void unicast (int serverNumber, ServerInfo p, String message) {
-
+        if(p == null) {
+            return;
+        }
         BlockchainClientRunnable bcr = new BlockchainClientRunnable(serverNumber, p.getHost(), p.getPort(), message);
         try {
             Thread unicast = new Thread(bcr);
