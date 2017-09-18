@@ -73,21 +73,9 @@ public class BlockchainClient {
                     String output = (pl.clearServerInfo()) ? "Succeeded\n\n" : "Failed\n\n";
                     System.out.printf("%s", output);
                 }
-                else if(message.contains("tx"))
+                else if(message.matches("^tx.*"))
                 {
-                    String parts[] = message.split("\\|");
-                    // Check validity
-                    if(parts.length != 3)
-                        System.out.printf("Failed\n\n");
-                    else if( !Pattern.matches("[a-z]{4}[0-9]{4}", parts[1])
-                            || parts[2].length() > 70
-                            || parts[2].contains("\\|"))
-                    {
-                        System.out.printf("Failed\n\n");
-                    }
-                    else {
-                        bc.broadcast(pl, message);
-                    }
+                    bc.broadcast(pl, message);
                 }
                 else if(message.contains("pb"))
                 {

@@ -23,7 +23,7 @@ public class BlockchainClientRunnable implements Runnable {
     public void run() {
 
         try {
-            if(!InetAddress.getByName(this.serverName).isReachable(100)) {
+            if(!InetAddress.getByName(this.serverName).isReachable(1000)) {
                 throw new Exception();
             }
         } catch (Exception e) {

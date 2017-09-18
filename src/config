@@ -6,10 +6,10 @@ server0.port=1243
 server1.host=localhost
 server1.port=6333
 
-server2.host=13.2.4.1
+server2.host=10.16.254.225
 
 server2.port=8333
 
 server3.host=localhost
-server3.port=8334
+server3.port=8333
 
