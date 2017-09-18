@@ -11,7 +11,14 @@ public class BlockchainServer {
             return;
         }
 
-        int portNumber = Integer.parseInt(args[0]);
+        int portNumber = 0;
+
+        try {
+            portNumber = Integer.parseInt(args[0]);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
+
         Blockchain blockchain = new Blockchain();
 
 
@@ -23,6 +30,8 @@ public class BlockchainServer {
 
         ServerSocket serverSocket = null;
         try {
+            if(portNumber < 1024 || portNumber > 65535)
+                throw new IllegalArgumentException();
             serverSocket = new ServerSocket(portNumber);
 
             // implement your code here.
@@ -36,6 +45,8 @@ public class BlockchainServer {
         } catch (ConnectException e) {
             e.printStackTrace();
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
 

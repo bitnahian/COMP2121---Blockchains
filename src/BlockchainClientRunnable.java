@@ -52,22 +52,21 @@ public class BlockchainClientRunnable implements Runnable {
         BufferedReader inputReader = new BufferedReader(new InputStreamReader(serverInputStream));
         PrintWriter outWriter = new PrintWriter(serverOutputStream, true);
 
-        outWriter.println(message);
         long startTime = System.currentTimeMillis(); //fetch starting time
+        outWriter.println(message);
+        //Thread.sleep(2000);
         // Time out of 2 seconds
-        while( !inputReader.ready() && (System.currentTimeMillis()-startTime)<2000);
+        Thread.sleep(50);
         String output = "";
-        // Get reply from server
-        if((output = inputReader.readLine()) == null)
-            throw new Exception();
-
-        this.reply += output + "\n";
-
         while(inputReader.ready())
         {
-            this.reply += inputReader.readLine() + "\n";
+            output += inputReader.readLine() + "\n";
         }
 
+        if (System.currentTimeMillis()-startTime > 2000)
+            throw new Exception();
+
+        this.reply += output;
         outWriter.println("cc");
     }
 

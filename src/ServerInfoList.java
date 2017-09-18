@@ -107,6 +107,11 @@ public class ServerInfoList {
                 {
                     // Check if serverIndex already has either port/host
                     String[] parts = currentLine.split("=");
+                    if(!(parts.length > 1))
+                    {
+                        System.out.printf("Failed\n\n");
+                        continue;
+                    }
                     String numberOnly = parts[0].replaceAll("[^0-9]", "");
                     int serverIndex = Integer.parseInt(numberOnly);
 
@@ -127,6 +132,11 @@ public class ServerInfoList {
                 else if(currentLine.matches("^server[0-9]+\\.port=[^=]*$"))
                 {
                     String[] parts = currentLine.split("=");
+                    if(!(parts.length > 1))
+                    {
+                        System.out.printf("Failed\n\n");
+                        continue;
+                    }
                     String numberOnly = parts[0].replaceAll("[^0-9]", "");
                     int serverIndex = Integer.parseInt(numberOnly);
                     //System.out.println(serverIndex);

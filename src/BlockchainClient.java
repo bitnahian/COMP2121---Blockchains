@@ -98,7 +98,7 @@ public class BlockchainClient {
                         continue;
                     }
                     if(!message.matches("^pb(?:\\|\\d+)+")) // If it doesn't match format
-                        System.out.printf("Failed\n\n");
+                        continue;
                     else
                     {
                         String[] parts = message.split("\\|");
@@ -114,7 +114,6 @@ public class BlockchainClient {
                                 indices.add(Integer.parseInt(parts[i]));
                             bc.multicast(pl, indices, "pb");
                         }
-                        System.out.printf("Succeeded\n\n");
                     }
 
                 }
