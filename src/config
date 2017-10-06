@@ -1,15 +1,13 @@
 servers.num=4
 
-server0.host=localhost
-server0.port=1243
+server0.host=fe80::c9f1:420a:4a0b:29ba
+server0.port=6333
 
-server1.host=localhost
-server1.port=6333
+server1.host=fe80::c9f1:420a:4a0b:29ba
+server1.port=7333
 
-server2.host=10.16.254.225
-
+server2.host=fe80::c9f1:420a:4a0b:29ba
 server2.port=8333
 
-server3.host=localhost
-server3.port=8333
-
+server3.host=fe80::c9f1:420a:4a0b:29ba
+server3.port=9333
