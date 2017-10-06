@@ -1,9 +1,10 @@
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.concurrent.Callable;
 
 
-public class BlockchainClientRunnable implements Runnable {
+public class BlockchainClientRunnable implements Callable<String> {
 
     private String reply;
 
@@ -20,15 +21,15 @@ public class BlockchainClientRunnable implements Runnable {
         this.reply = "Server" + serverNumber + ": " + serverName + " " + portNumber + "\n"; // header string
     }
 
-    public void run() {
+    public String call() {
 
         try {
-            if(!InetAddress.getByName(this.serverName).isReachable(1000)) {
+            if(!InetAddress.getByName(this.serverName).isReachable(2000)) {
                 throw new Exception();
             }
         } catch (Exception e) {
             this.reply += "Server is not available\n\n";
-            return;
+            return reply;
         }
 
         try {
@@ -37,31 +38,30 @@ public class BlockchainClientRunnable implements Runnable {
             InputStream inputStream = clientSocket.getInputStream();
             OutputStream outputStream = clientSocket.getOutputStream();
 
-            clientHandler(inputStream, outputStream);
+
+            clientHandler(clientSocket, inputStream, outputStream);
             clientSocket.close();
 
         } catch(Exception e) {
+            //e.printStackTrace();
             this.reply += "Server is not available\n\n";
-            return;
+            return reply;
         }
-
+        return reply;
     }
 
-    private void clientHandler(InputStream serverInputStream, OutputStream serverOutputStream) throws Exception{
+    private void clientHandler(Socket clientSocket, InputStream serverInputStream, OutputStream serverOutputStream) throws Exception{
 
         BufferedReader inputReader = new BufferedReader(new InputStreamReader(serverInputStream));
         PrintWriter outWriter = new PrintWriter(serverOutputStream, true);
-
-        long startTime = System.currentTimeMillis(); //fetch starting time
-        outWriter.println(message);
-        // Time out of 2 seconds
-        Thread.sleep(50);
         String output = "";
-        while(inputReader.ready())
+        String temp = "";
+        outWriter.println(message);
+        clientSocket.setSoTimeout(2000);
+        Thread.sleep(5);
+        while(inputReader.ready() && (temp = inputReader.readLine()) != null)
         {
-            output += inputReader.readLine() + "\n";
-            if (System.currentTimeMillis()-startTime > 2000)
-                throw new Exception();
+            output += temp + "\n";
         }
 
         this.reply += output;
