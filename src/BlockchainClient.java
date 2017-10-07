@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 
 public class BlockchainClient {
 
-    static int POOL_SIZE = 5;
+    static int POOL_SIZE = 40;
 
     public static void main(String[] args) {
 
@@ -157,7 +157,8 @@ public class BlockchainClient {
             /*Thread unicast = new Thread(bcr);
             unicast.start();
             unicast.join();*/
-            System.out.printf("%s", (String) future.get());
+            Thread.sleep(50);
+            System.out.printf("%s", (String) future.get(500, TimeUnit.MILLISECONDS));
         } catch (Exception e)
         {
             System.err.println("Error: Thread was interrupted and could not complete action.");
@@ -179,7 +180,11 @@ public class BlockchainClient {
             //threads.get(serverNumber).start();
             serverNumber++;
         }
-
+        try {
+            Thread.sleep(50);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         String reply = getReplies(futures);
 
         System.out.printf("%s", reply);
@@ -209,7 +214,11 @@ public class BlockchainClient {
             //pool.submit(threads.get(i));
             //++i;
         }
-
+        try {
+            Thread.sleep(50);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         String reply = getReplies(futures);
 
         /*for(int j = 0; j < threads.size(); ++ j)
@@ -248,7 +257,9 @@ public class BlockchainClient {
 
         for(Future<String> future : futures) {
             try {
-                reply += (String) future.get(500, TimeUnit.MILLISECONDS);
+                if(future.isCancelled())
+                    throw new InterruptedException();
+                reply += (String) future.get(1000, TimeUnit.MILLISECONDS);
             } catch (InterruptedException e) {
                 e.printStackTrace();
                 System.err.println("Error: Thread was interrupted and could not complete action.");

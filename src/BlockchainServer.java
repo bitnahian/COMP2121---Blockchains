@@ -8,7 +8,7 @@ import java.util.concurrent.Executors;
 
 public class BlockchainServer {
 
-    static int POOL_SIZE = 5;
+    static int POOL_SIZE = 40;
 
     public static void main(String[] args) {
 

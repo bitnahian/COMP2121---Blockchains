@@ -58,7 +58,7 @@ public class BlockchainClientRunnable implements Callable<String> {
         String temp = "";
         outWriter.println(message);
         clientSocket.setSoTimeout(2000);
-        Thread.sleep(5);
+        Thread.sleep(200);
         while(inputReader.ready() && (temp = inputReader.readLine()) != null)
         {
             output += temp + "\n";
