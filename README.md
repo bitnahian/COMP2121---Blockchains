@@ -44,11 +44,11 @@ The client preloads servers from the config file. Read the [Assignment Specifica
 
 * **Nahian Al Hasan** - *Initial work* - [bitnahian](https://github.com/bitnahian)
 
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+See also the list of [contributors](https://github.com/bitnahian/COMP2121---Blockchains/graphs/contributors) who participated in this project.
 
 ## License
 
-This project is licensed under the GNU 3.0 License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the GPL-3.0 License - see the [LICENSE.md](LICENSE.md) file for details
 
 ## Acknowledgments
 
